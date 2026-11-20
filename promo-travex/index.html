@@ -41,6 +41,9 @@
         box-shadow:0 0 0 1px rgba(255,255,255,.18) inset}
   .topbar .right{display:flex;gap:16px;align-items:center}
   .dotlive{width:6px;height:6px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(255,106,26,.16)}
+  .dl{color:var(--orange);text-decoration:none;border:1px solid rgba(255,106,26,.45);
+      border-radius:4px;padding:4px 9px;letter-spacing:.14em;transition:background .2s,color .2s}
+  .dl:hover{background:var(--orange);color:#1a0a00;border-color:var(--orange)}
 
   .player{width:min(96vw,168vh);position:relative}
   .stage{
@@ -294,6 +297,7 @@
   </div>
   <div class="right">
     <span>16:9 · 1080p · 1 min 17</span>
+    <a class="dl" href="export/travex-promo-16x9.mp4" download>↓ Télécharger le .mp4</a>
     <span class="dotlive"></span><span>v1.0</span>
   </div>
 </div>
