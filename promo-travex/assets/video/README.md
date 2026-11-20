@@ -26,6 +26,13 @@ Extensions acceptées : `.mp4`, `.mov`, `.m4v`, `.webm`, `.mkv`.
 - le dégradé de lisibilité, la brume, le grain et tous les textes sont appliqués par-dessus ;
 - le son du clip est ignoré : seule la voix off française est mixée.
 
+## Filigrane et rythme
+
+- `ZOOM_IN = 1.12` (haut de `render.py`) recadre le clip de 12 % : un filigrane collé
+  dans un angle sort du cadre. Monte à 1.2 si le logo est plus large.
+- `SLOWMO = 1.6` ralentit le clip à l'extraction : un plan de 5 s tient alors 8 s
+  (utile pour les plans longs, sans son).
+
 ## Recommandations
 
 - 5 à 15 s de rushes par plan suffisent (le plus long plan fait 14 s).

@@ -382,6 +382,8 @@ VIDEO_DIR = os.path.join(ROOT, "assets", "video")
 STEMS = {1: "06-douala", 2: "01-air-freight", 3: "02-sea-containers", 4: "04-roro-vehicles",
          5: "03-warehouse", 6: "07-trust-team", 7: "05-truck-europe"}
 EXTS = (".mp4", ".mov", ".m4v", ".webm", ".mkv")
+ZOOM_IN = 1.12   # recadrage : sort les filigranes d'angle du cadre
+SLOWMO = 1.00    # 1.6 = un clip de 5 s tient 8 s (aucun son conservé)
 
 class VideoSource:
     """Un rush fourni par le client : boucle en ping-pong, cadré en 1920x1080."""
@@ -390,8 +392,10 @@ class VideoSource:
         self.path = path
         self.dir = tempfile.mkdtemp(prefix="travex_bg_")
         out = os.path.join(self.dir, "f%05d.jpg")
-        vf = (f"fps={FPS},scale={w}:{h}:force_original_aspect_ratio=increase,"
-              f"crop={w}:{h},eq=contrast=1.04:saturation=0.95")
+        zw, zh = int(w * ZOOM_IN), int(h * ZOOM_IN)
+        vf = (f"scale={zw}:{zh}:force_original_aspect_ratio=increase,crop={zw}:{zh},"
+              f"setpts=(PTS-STARTPTS)/{SLOWMO},fps={FPS},"
+              f"scale={w}:{h},eq=contrast=1.04:saturation=0.95")
         subprocess.run([FFMPEG, "-y", "-hide_banner", "-loglevel", "error",
                         "-i", path, "-vf", vf, "-q:v", "3", out], check=True)
         self.frames = sorted(glob.glob(os.path.join(self.dir, "*.jpg")))
