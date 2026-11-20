@@ -14,3 +14,7 @@ video-agent/.tmp/
 video-agent/broll/frames/
 video-agent/broll/clips/
 video-agent/edits/*/output/
+
+# python
+__pycache__/
+*.pyc

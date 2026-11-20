@@ -6,9 +6,9 @@ Sortie : promo-travex/export/travex-promo-16x9.mp4
 Stills : python3 promo-travex/render.py --stills 3,12,20,30,45,60,70
 Rendu  : python3 promo-travex/render.py
 """
-import os, subprocess, argparse
+import os, subprocess, argparse, glob, math, tempfile
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import imageio_ffmpeg
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -377,6 +377,172 @@ def footer_line():
     draw_tracked(d, (32, 15), t, fm, (238, 243, 250), 5, 1)
     return im
 
+# ------------------------------------------------------------------ fonds vidéo
+VIDEO_DIR = os.path.join(ROOT, "assets", "video")
+STEMS = {1: "06-douala", 2: "01-air-freight", 3: "02-sea-containers", 4: "04-roro-vehicles",
+         5: "03-warehouse", 6: "07-trust-team", 7: "05-truck-europe"}
+EXTS = (".mp4", ".mov", ".m4v", ".webm", ".mkv")
+
+class VideoSource:
+    """Un rush fourni par le client : boucle en ping-pong, cadré en 1920x1080."""
+
+    def __init__(self, path, w=W, h=H):
+        self.path = path
+        self.dir = tempfile.mkdtemp(prefix="travex_bg_")
+        out = os.path.join(self.dir, "f%05d.jpg")
+        vf = (f"fps={FPS},scale={w}:{h}:force_original_aspect_ratio=increase,"
+              f"crop={w}:{h},eq=contrast=1.04:saturation=0.95")
+        subprocess.run([FFMPEG, "-y", "-hide_banner", "-loglevel", "error",
+                        "-i", path, "-vf", vf, "-q:v", "3", out], check=True)
+        self.frames = sorted(glob.glob(os.path.join(self.dir, "*.jpg")))
+        if not self.frames:
+            raise RuntimeError(f"aucune image extraite de {path}")
+        self.n = len(self.frames)
+        self._cache_i = -1
+        self._cache_img = None
+
+    def frame(self, local):
+        i = int(local * FPS)
+        if i >= self.n:                                  # ping-pong : pas de saut
+            span = max(1, (self.n - 1) * 2)
+            i = i % span
+            if i >= self.n:
+                i = span - i
+        if i != self._cache_i:
+            self._cache_img = Image.open(self.frames[i]).convert("RGB")
+            self._cache_i = i
+        return self._cache_img
+
+    def close(self):
+        try:
+            subprocess.run(["rm", "-rf", self.dir])
+        except Exception:
+            pass
+
+def load_videos():
+    found = {}
+    if not os.path.isdir(VIDEO_DIR):
+        return found
+    for idx, stem in STEMS.items():
+        for ext in EXTS:
+            p = os.path.join(VIDEO_DIR, stem + ext)
+            if os.path.exists(p):
+                try:
+                    found[idx] = VideoSource(p)
+                    print(f"fond vidéo : scène {idx} <- {os.path.basename(p)}")
+                except Exception as e:
+                    print(f"!! {p} illisible ({e})")
+                break
+    return found
+
+VIDEOS = {}
+
+# ------------------------------------------------------------------ atmosphère
+_STYLE = {
+    1: dict(grade="left",   fog=0.070, warm=True,  sweep=0.050, dust=0),
+    2: dict(grade="left",   fog=0.060, warm=False, sweep=0.040, dust=0),
+    3: dict(grade="left",   fog=0.065, warm=True,  sweep=0.045, dust=0),
+    4: dict(grade="left",   fog=0.070, warm=False, sweep=0.030, dust=0),
+    5: dict(grade="left",   fog=0.040, warm=True, sweep=0.035, dust=1),
+    6: dict(grade="left",   fog=0.035, warm=True,  sweep=0.025, dust=1),
+    7: dict(grade="center", fog=0.055, warm=True,  sweep=0.045, dust=0),
+}
+
+def _cloud(w, h, cells, seed, blur):
+    rng = np.random.default_rng(seed)
+    small = rng.random((cells, max(2, int(cells * h / w)))).astype(np.float32)
+    im = Image.fromarray((small * 255).astype(np.uint8), "L").resize((w, h), Image.BICUBIC)
+    return np.asarray(im.filter(ImageFilter.GaussianBlur(blur)), np.float32) / 255.0
+
+_FOG = {}
+def fog_layer(warm=True, size=(W + 240, H + 240)):
+    key = (warm, size)
+    if key in _FOG:
+        return _FOG[key]
+    w, h = size
+    a = 0.62 * _cloud(w, h, 7, 11, 26) + 0.38 * _cloud(w, h, 19, 7, 9)
+    a = np.clip((a - 0.34) * 2.1, 0, 1) ** 1.25
+    tint = (255, 236, 220) if warm else (206, 220, 238)
+    arr = np.zeros((h, w, 4), np.uint8)
+    arr[..., 0], arr[..., 1], arr[..., 2] = tint
+    arr[..., 3] = (a * 255).astype(np.uint8)
+    _FOG[key] = Image.fromarray(arr, "RGBA")
+    return _FOG[key]
+
+_SWEEP = {}
+def sweep_layer(size=(W + 600, H)):
+    if size in _SWEEP:
+        return _SWEEP[size]
+    w, h = size
+    xs = np.linspace(0, 1, w)[None, :]
+    band = np.exp(-((xs - 0.5) ** 2) / 0.0022) * 0.9 + np.exp(-((xs - 0.18) ** 2) / 0.010) * 0.35
+    arr = np.zeros((h, w, 4), np.uint8)
+    arr[..., 0], arr[..., 1], arr[..., 2] = (255, 246, 236)
+    arr[..., 3] = (np.clip(band, 0, 1) * 255).astype(np.uint8)
+    _SWEEP[size] = Image.fromarray(arr, "RGBA")
+    return _SWEEP[size]
+
+_GRAIN = []
+def grain_frames(n=5):
+    if _GRAIN:
+        return _GRAIN
+    rng = np.random.default_rng(42)
+    for _ in range(n):
+        a = rng.normal(128, 26, (H, W, 1)).repeat(3, axis=2)
+        _GRAIN.append(Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), "RGB"))
+    return _GRAIN
+
+def dust_sprite():
+    s = 26
+    im = Image.new("RGBA", (s, s), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    for r in range(s // 2, 0, -1):
+        alpha = int(62 * (1 - r / (s / 2)) ** 1.6)
+        d.ellipse([s / 2 - r, s / 2 - r, s / 2 + r, s / 2 + r], fill=(255, 240, 222, alpha))
+    return im
+
+DUST = [(np.random.default_rng(i).random(), np.random.default_rng(i + 100).random(),
+         np.random.default_rng(i + 200).random()) for i in range(70)]
+
+def atmosphere(im, style, local, frame_no):
+    """Brume qui dérive, balayage de lumière, poussière, grain : le plan bouge vraiment."""
+    # brume
+    fstr = style["fog"]
+    if fstr > 0:
+        fog = fog_layer(style["warm"])
+        ox = int(120 + 90 * math.sin(local * 0.11))
+        oy = int(120 + 60 * math.cos(local * 0.08))
+        part = fog.crop((ox, oy, ox + W, oy + H))
+        a = np.asarray(part.split()[-1], np.float32) / 255.0 * fstr
+        part.putalpha(Image.fromarray((a * 255).astype(np.uint8)))
+        im.alpha_composite(part)
+    # balayage de lumière
+    sstr = style["sweep"]
+    if sstr > 0:
+        sw = sweep_layer()
+        ox = int(300 + 220 * math.sin(local * 0.16 + 1.2))
+        part = sw.crop((ox, 0, ox + W, H))
+        a = np.asarray(part.split()[-1], np.float32) / 255.0 * sstr
+        part.putalpha(Image.fromarray((a * 255).astype(np.uint8)))
+        im.alpha_composite(part)
+    # poussière en suspension (intérieurs)
+    if style["dust"]:
+        sprite = dust_sprite()
+        for i, (x0, y0, sp) in enumerate(DUST[:46]):
+            y = (y0 * H - local * (14 + 18 * sp)) % H
+            x = (x0 * W + 26 * math.sin(local * (0.35 + 0.3 * sp) + i)) % W
+            im.alpha_composite(sprite, (int(x), int(y)))
+    # grain image par image
+    g = grain_frames()[frame_no % len(grain_frames())]
+    im = Image.blend(im, g.convert("RGBA"), 0.045)
+    return im
+
+def grade_full(kind):
+    key = ("full", kind)
+    if key not in _BG_CACHE:
+        _BG_CACHE[key] = grade_layer(kind, W, H)
+    return _BG_CACHE[key]
+
 # ------------------------------------------------------------------ construction
 def build_scenes():
     S = []
@@ -550,16 +716,25 @@ def scene_at(t):
 
 def frame(scene_idx, local):
     sc = SCENES[scene_idx]
+    style = _STYLE[scene_idx + 1]
     p = clamp(local / sc["dur"])
-    z0, z1 = sc["zoom"]
-    z = z0 + (z1 - z0) * p
-    win_w, win_h = BW / z, BH / z
-    fx = clamp(sc["focus"][0] + 0.02 * (p - 0.5))
-    fy = clamp(sc["focus"][1], 0.05, 0.95)
-    cx = clamp(fx * BW, win_w / 2, BW - win_w / 2)
-    cy = clamp(fy * BH, win_h / 2, BH - win_h / 2)
-    box = (int(cx - win_w / 2), int(cy - win_h / 2), int(cx + win_w / 2), int(cy + win_h / 2))
-    im = sc["bg"].crop(box).resize((W, H), Image.BILINEAR).convert("RGBA")
+
+    if (scene_idx + 1) in VIDEOS:                      # ---- fond = rush vidéo
+        im = VIDEOS[scene_idx + 1].frame(local).convert("RGBA")
+        im.alpha_composite(grade_full(style["grade"]))
+    else:                                              # ---- fond = photo animée
+        z0, z1 = sc["zoom"]
+        # respiration lente de la caméra, comme un vrai opérateur
+        z = z0 + (z1 - z0) * p + 0.006 * math.sin(local * 0.9)
+        win_w, win_h = BW / z, BH / z
+        fx = clamp(sc["focus"][0] + 0.030 * (p - 0.5) + 0.008 * math.sin(local * 0.55))
+        fy = clamp(sc["focus"][1] + 0.012 * math.cos(local * 0.42), 0.05, 0.95)
+        cx = clamp(fx * BW, win_w / 2, BW - win_w / 2)
+        cy = clamp(fy * BH, win_h / 2, BH - win_h / 2)
+        box = (int(cx - win_w / 2), int(cy - win_h / 2), int(cx + win_w / 2), int(cy + win_h / 2))
+        im = sc["bg"].crop(box).resize((W, H), Image.BILINEAR).convert("RGBA")
+
+    im = atmosphere(im, style, local, int(local * FPS))
 
     for l in sc["layers"]:
         pr = (local - l.t) / l.dur
@@ -581,8 +756,8 @@ def frame(scene_idx, local):
             im.paste(crop, (int(l.xy[0]), int(l.xy[1])), crop)
             continue
         if l.kind == "scale":
-            s = 0.92 + 0.08 * e
-            nw, nh = max(1, int(l.img.size[0] * s)), max(1, int(l.img.size[1] * s))
+            sc_ = 0.92 + 0.08 * e
+            nw, nh = max(1, int(l.img.size[0] * sc_)), max(1, int(l.img.size[1] * sc_))
             c = l.img.resize((nw, nh), Image.BILINEAR)
             base = np.asarray(c.split()[-1], np.float32)
             c.putalpha(Image.fromarray((base * e).astype(np.uint8)))
@@ -599,10 +774,10 @@ def frame(scene_idx, local):
 
     # fondu d'ouverture / de fermeture
     if local < 0.8 and scene_idx == 0:
-        k = 1 - ease(local / 0.8)
-        im = Image.blend(im, BLACK.convert("RGBA"), k)
-    if scene_idx == len(SCENES) - 1 and local > sc_dur_last(scene_idx) - 1.0:
-        k = ease((local - (sc_dur_last(scene_idx) - 1.0)) / 1.0)
+        im = Image.blend(im, BLACK.convert("RGBA"), 1 - ease(local / 0.8))
+    last = scene_idx == len(SCENES) - 1
+    if last and local > SCENES[scene_idx]["dur"] - 1.0:
+        k = ease((local - (SCENES[scene_idx]["dur"] - 1.0)) / 1.0)
         im = Image.blend(im, BLACK.convert("RGBA"), k)
     return im
 
@@ -623,6 +798,8 @@ def audio_filter():
 
 # ------------------------------------------------------------------ sortie
 def render(out_path):
+    global VIDEOS
+    VIDEOS = load_videos()
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     total = int(round(TOTAL * FPS))
     cmd = [FFMPEG, "-y", "-hide_banner", "-loglevel", "error",

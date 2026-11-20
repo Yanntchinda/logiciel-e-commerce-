@@ -7,13 +7,31 @@ Format **1920 × 1080 (16:9)**, **1 min 17**, **voix off française**, sous-titr
 ## Voir le film
 
 ```bash
-cd promo-travex
-python3 -m http.server 8080
-# → http://localhost:8080
+python3 promo-travex/serve.py          # http://localhost:8080
 ```
+
+`serve.py` est un petit serveur statique qui gère les requêtes **Range** : sans lui
+(`python3 -m http.server`), la barre de lecture du navigateur ne peut pas se déplacer
+dans le `.mp4`.
 
 Le lecteur a : lecture / pause, scrub sur la timeline, chapitres, mode muet,
 plein écran (`f`), navigation `←` `→` (2 s).
+
+## Fonds : vidéo ou photo animée
+
+Chaque plan a un **fond en mouvement**. Deux sources possibles :
+
+1. **Vos rushes** — déposez un clip dans `assets/video/` au nom du plan
+   (`06-douala.mp4`, `01-air-freight.mp4`, …). Il est recadré en 1920×1080, coupé à la
+   durée du plan, rejoué en ping-pong s'il est plus court. Détails : `assets/video/README.md`.
+2. **Photo animée** (par défaut, en attendant les rushes) — la photo bouge vraiment :
+   caméra en travelling + respiration, brume qui dérive, balayage de lumière, poussière
+   en suspension sur les intérieurs, grain régénéré à chaque image.
+   Mesure faite sur le rendu : entre deux images espacées de 0,5 s, 33 à 43 % des pixels changent.
+
+Aucun stock de rushes n'est accessible depuis l'environnement de génération (réseau limité) :
+les séquences « réelles » doivent venir de vos tournages, ou d'une banque d'images
+téléchargée puis déposée dans `assets/video/`.
 
 ## Découpage
 

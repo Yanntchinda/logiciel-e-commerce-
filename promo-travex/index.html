@@ -3,808 +3,195 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Travex Global Forwarding — Film promo (16:9)</title>
+<title>Travex Global Forwarding — film promo (16:9)</title>
 <meta name="description" content="Film de présentation des services de Travex Global Forwarding : fret aérien, maritime, Ro-Ro, entreposage, import/export et douane. Renchen (Allemagne) · Douala (Cameroun).">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#05090f;
-    --ink:#eef2f7;
-    --muted:rgba(238,242,247,.62);
-    --orange:#ff6a1a;
-    --orange-2:#ffa06b;
-    --line:rgba(255,255,255,.16);
-  }
+  :root{ --bg:#05090f; --ink:#eef2f7; --muted:rgba(238,242,247,.6); --orange:#ff6a1a; }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
-    margin:0;background:
+    margin:0;min-height:100vh;padding:18px 16px 14px;
+    background:
       radial-gradient(1200px 700px at 78% -12%, rgba(255,106,26,.13), transparent 60%),
       radial-gradient(900px 600px at 8% 108%, rgba(50,110,255,.10), transparent 60%),
       var(--bg);
-    color:var(--ink);
-    font-family:"Inter Tight","Helvetica Neue",Helvetica,Arial,sans-serif;
+    color:var(--ink);font-family:"Inter Tight","Helvetica Neue",Helvetica,Arial,sans-serif;
     -webkit-font-smoothing:antialiased;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    min-height:100vh;padding:18px 16px 14px;gap:12px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
   }
-
-  /* ---------- page chrome ---------- */
-  .topbar{width:min(96vw,168vh);display:flex;align-items:center;justify-content:space-between;gap:14px;
-          font-family:"JetBrains Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.18em;
-          text-transform:uppercase;color:var(--muted)}
-  .topbar b{color:var(--ink);font-weight:500;letter-spacing:.22em}
-  .topbar .brandline{display:flex;align-items:center;gap:9px}
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;letter-spacing:.18em;
+        text-transform:uppercase;font-size:10.5px;color:var(--muted)}
+  .topbar{width:min(96vw,168vh);display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .brandline{display:flex;align-items:center;gap:9px}
   .mark{width:16px;height:16px;border-radius:3px;background:linear-gradient(135deg,var(--orange),#ff3d00);
         box-shadow:0 0 0 1px rgba(255,255,255,.18) inset}
+  .topbar b{color:var(--ink);font-weight:500;letter-spacing:.22em}
   .topbar .right{display:flex;gap:16px;align-items:center}
-  .dotlive{width:6px;height:6px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 4px rgba(255,106,26,.16)}
   .dl{color:var(--orange);text-decoration:none;border:1px solid rgba(255,106,26,.45);
-      border-radius:4px;padding:4px 9px;letter-spacing:.14em;transition:background .2s,color .2s}
+      border-radius:4px;padding:5px 10px;transition:background .2s,color .2s}
   .dl:hover{background:var(--orange);color:#1a0a00;border-color:var(--orange)}
 
-  .player{width:min(96vw,168vh);position:relative}
-  .stage{
-    position:relative;width:min(96vw,168vh);aspect-ratio:16/9;overflow:hidden;
-    border-radius:14px;background:#03060a;
-    box-shadow:0 40px 120px -40px rgba(0,0,0,.95), 0 0 0 1px rgba(255,255,255,.09);
-    container-type:size;
-    isolation:isolate;
-  }
+  .player{position:relative;width:min(96vw,168vh);aspect-ratio:16/9;border-radius:14px;overflow:hidden;
+    background:#03060a;box-shadow:0 40px 120px -40px rgba(0,0,0,.95),0 0 0 1px rgba(255,255,255,.09)}
+  video{display:block;width:100%;height:100%;object-fit:cover;background:#000}
 
-  /* ---------- scenes ---------- */
-  .scene{position:absolute;inset:0;opacity:0;visibility:hidden;overflow:hidden}
-  .scene.live{opacity:1;visibility:visible}
-
-  .bg{
-    position:absolute;inset:-2%;background-size:cover;background-position:center;
-    filter:saturate(.86) contrast(1.06) brightness(.82);
-    animation-name:kenburns;animation-duration:var(--dur,14s);animation-timing-function:linear;
-    animation-fill-mode:both;transform-origin:60% 45%;
-  }
-  .grade{position:absolute;inset:0;
-    background:
-      linear-gradient(90deg, rgba(3,7,12,.94) 0%, rgba(3,7,12,.78) 34%, rgba(3,7,12,.18) 62%, rgba(3,7,12,.55) 100%),
-      linear-gradient(0deg, rgba(3,7,12,.92) 0%, rgba(3,7,12,.12) 42%, rgba(3,7,12,.45) 100%);
-  }
-  .grade.soft{background:
-      linear-gradient(90deg, rgba(3,7,12,.86) 0%, rgba(3,7,12,.5) 40%, rgba(3,7,12,.12) 70%),
-      linear-gradient(0deg, rgba(3,7,12,.9) 0%, rgba(3,7,12,.08) 45%, rgba(3,7,12,.35) 100%);}
-  .grade.center{background:radial-gradient(120% 100% at 50% 45%, rgba(3,7,12,.55) 0%, rgba(3,7,12,.88) 62%, rgba(3,7,12,.97) 100%);}
-  .grid-lines{position:absolute;inset:0;opacity:.16;
-    background-image:linear-gradient(to right, rgba(255,255,255,.12) 1px, transparent 1px);
-    background-size:calc(100% / 12) 100%;}
-  .vignette{position:absolute;inset:0;box-shadow:inset 0 0 22cqw 4cqw rgba(0,0,0,.6);pointer-events:none}
-  .grain{position:absolute;inset:0;pointer-events:none;opacity:.055;mix-blend-mode:overlay;
-    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size:240px 240px;animation:grainmove 1.1s steps(4) infinite}
-  @keyframes grainmove{
-    0%{transform:translate(0,0)}25%{transform:translate(-2%,1%)}
-    50%{transform:translate(1%,-2%)}75%{transform:translate(-1%,-1%)}100%{transform:translate(0,0)}
-  }
-
-  .pad{position:absolute;inset:0;padding:5.2cqw 6.4cqw;display:flex}
-
-  /* ---------- animation engine ---------- */
-  .anim{animation-fill-mode:both;animation-timing-function:cubic-bezier(.22,1,.36,1);
-        animation-duration:var(--dur,.9s)}
-  .rise{animation-name:rise}
-  .fade{animation-name:fade}
-  .slideR{animation-name:slideR}
-  .slideL{animation-name:slideL}
-  .grow{animation-name:grow;transform-origin:left center}
-  .zoomIn{animation-name:zoomIn}
-  @keyframes rise{from{opacity:0;transform:translateY(1.7cqw)}to{opacity:1;transform:none}}
-  @keyframes fade{from{opacity:0}to{opacity:1}}
-  @keyframes slideR{from{opacity:0;transform:translateX(2.6cqw)}to{opacity:1;transform:none}}
-  @keyframes slideL{from{opacity:0;transform:translateX(-2.6cqw)}to{opacity:1;transform:none}}
-  @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-  @keyframes zoomIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
-  @keyframes kenburns{from{transform:scale(1.03)}to{transform:scale(1.16)}}
-  @keyframes draw{from{stroke-dashoffset:var(--len,900)}to{stroke-dashoffset:0}}
-  @keyframes pulse{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
-  @keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
-
-  /* ---------- typography ---------- */
-  .eyebrow{
-    display:inline-flex;align-items:center;gap:.7cqw;
-    font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.66cqw;letter-spacing:.24em;
-    text-transform:uppercase;color:rgba(238,242,247,.72);
-    border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:.55cqw 1.1cqw;
-    background:rgba(8,14,22,.5);backdrop-filter:blur(6px);
-  }
-  .eyebrow .pip{width:.42cqw;height:.42cqw;border-radius:50%;background:var(--orange);
-    box-shadow:0 0 0 .28cqw rgba(255,106,26,.22)}
-  .display{
-    margin:2.2cqw 0 0;font-size:4.7cqw;line-height:.99;letter-spacing:-.035em;font-weight:700;
-    max-width:100%;
-  }
-  .display span{display:block}
-  .display .hot{color:var(--orange)}
-  .h2{margin:1.5cqw 0 0;font-size:3.15cqw;line-height:1.04;letter-spacing:-.03em;font-weight:600;max-width:20ch}
-  .h2 em{font-style:normal;color:var(--orange)}
-  .lede{margin:1.6cqw 0 0;font-size:1.12cqw;line-height:1.65;color:rgba(238,242,247,.75);max-width:44ch;font-weight:300}
-  .rule{height:1px;background:linear-gradient(90deg,var(--orange),rgba(255,106,26,0));margin:1.9cqw 0 0;width:16cqw}
-  .kicker{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.62cqw;letter-spacing:.26em;
-    text-transform:uppercase;color:rgba(255,106,26,.95)}
-  .kicker .sep{color:rgba(238,242,247,.3);margin:0 .5cqw}
-
-  /* ---------- scene 1 ---------- */
-  .s1-grid{display:grid;grid-template-columns:1.45fr .55fr;gap:2.4cqw;align-items:center}
-  .s1-right{display:flex;justify-content:center;align-items:center}
-  .routemap{width:100%;max-width:22cqw;filter:drop-shadow(0 2cqw 4cqw rgba(0,0,0,.5))}
-  .chips{display:flex;gap:.7cqw;margin-top:2.4cqw;flex-wrap:wrap}
-  .chip{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.58cqw;letter-spacing:.2em;
-    text-transform:uppercase;color:rgba(238,242,247,.8);border:1px solid var(--line);
-    padding:.42cqw .8cqw;border-radius:2px;background:rgba(255,255,255,.03)}
-
-  /* ---------- generic content scenes ---------- */
-  .content{display:flex;flex-direction:column;justify-content:center;max-width:46cqw;gap:0}
-  .content.right{margin-left:auto;align-items:flex-start}
-  .points{list-style:none;margin:1.8cqw 0 0;padding:0;display:flex;flex-direction:column;gap:.95cqw}
-  .points li{display:flex;align-items:flex-start;gap:.9cqw;font-size:1.02cqw;color:rgba(238,242,247,.82);
-    font-weight:300;line-height:1.45}
-  .points li .tick{flex:0 0 auto;width:1.1cqw;height:1.1cqw;margin-top:.18cqw;border-radius:50%;
-    border:1px solid rgba(255,106,26,.7);position:relative}
-  .points li .tick::after{content:"";position:absolute;inset:.28cqw;border-radius:50%;background:var(--orange)}
-
-  .badge-row{display:flex;gap:.55cqw;margin-top:2.1cqw}
-  .badge{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.55cqw;letter-spacing:.2em;
-    color:rgba(238,242,247,.66);border:1px solid rgba(255,255,255,.14);padding:.38cqw .7cqw;
-    border-radius:2px}
-
-  /* ---------- scene 5 ---------- */
-  .s5{display:grid;grid-template-columns:.94fr 1.06fr;gap:3.2cqw;align-items:center;width:100%}
-  .svc{display:grid;grid-template-columns:1fr 1fr;gap:.7cqw;margin-top:1.9cqw}
-  .svc .cell{border:1px solid rgba(255,255,255,.12);border-radius:3px;padding:.85cqw .95cqw;
-    background:rgba(8,13,20,.55);backdrop-filter:blur(4px)}
-  .svc .cell .n{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.5cqw;letter-spacing:.2em;
-    color:rgba(255,106,26,.9)}
-  .svc .cell .t{font-size:.86cqw;margin-top:.35cqw;line-height:1.25;font-weight:500}
-  .svc .cell .s{font-size:.66cqw;color:rgba(238,242,247,.55);margin-top:.2cqw;font-weight:300}
-  .thumbs{display:grid;grid-template-columns:1fr 1fr;gap:.8cqw;align-items:end}
-  .thumb{position:relative;margin:0;overflow:hidden;border-radius:4px;border:1px solid rgba(255,255,255,.14);
-    box-shadow:0 2cqw 4cqw rgba(0,0,0,.55)}
-  .thumb img{display:block;width:100%;height:14.5cqw;object-fit:cover;filter:saturate(.9) contrast(1.05)}
-  .thumb.tall img{height:19cqw}
-  .thumb figcaption{position:absolute;left:0;right:0;bottom:0;padding:.7cqw .8cqw;
-    font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.52cqw;letter-spacing:.16em;
-    text-transform:uppercase;color:rgba(238,242,247,.9);
-    background:linear-gradient(0deg,rgba(3,7,12,.92),rgba(3,7,12,0))}
-
-  /* ---------- scene 6 quote ---------- */
-  .quote{position:relative;max-width:46cqw}
-  .quote .qmark{position:absolute;left:-3.6cqw;top:-2.6cqw;font-size:8cqw;line-height:1;
-    color:rgba(255,106,26,.35);font-weight:700}
-  .quote blockquote{margin:0;font-size:2.5cqw;line-height:1.22;letter-spacing:-.025em;font-weight:500}
-  .quote blockquote em{font-style:normal;color:var(--orange)}
-  .quote .who{margin-top:1.6cqw;display:flex;align-items:center;gap:.9cqw;
-    font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.6cqw;letter-spacing:.2em;
-    text-transform:uppercase;color:rgba(238,242,247,.6)}
-  .quote .who .bar{width:2.4cqw;height:1px;background:var(--orange)}
-
-  /* ---------- scene 7 CTA ---------- */
-  .s7{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;text-align:center;gap:0}
-  .cta-title{font-size:3.7cqw;line-height:1.02;letter-spacing:-.035em;font-weight:700;max-width:26ch}
-  .cta-title em{font-style:normal;color:var(--orange)}
-  .pill{display:inline-flex;align-items:center;gap:.8cqw;margin-top:2.2cqw;
-    padding:.85cqw 1.7cqw;border-radius:100px;background:linear-gradient(135deg,var(--orange),#ff4a00);
-    color:#1a0a00;font-weight:700;font-size:1.05cqw;letter-spacing:.01em;
-    box-shadow:0 1.4cqw 3cqw -1cqw rgba(255,106,26,.6)}
-  .pill .arrow{font-size:1.2cqw;transform:translateY(-.05cqw)}
-  .places{display:flex;gap:1.2cqw;margin-top:2.6cqw;justify-content:center}
-  .place{border:1px solid rgba(255,255,255,.16);border-radius:5px;padding:1.05cqw 1.35cqw;
-    background:rgba(6,11,18,.62);backdrop-filter:blur(6px);text-align:left;min-width:17cqw}
-  .place .city{font-size:1.02cqw;font-weight:600;letter-spacing:.01em}
-  .place .city .cc{color:var(--orange);font-family:"JetBrains Mono",ui-monospace,monospace;
-    font-size:.55cqw;letter-spacing:.2em;margin-left:.5cqw;vertical-align:.15cqw}
-  .place .addr{font-size:.7cqw;color:rgba(238,242,247,.6);margin-top:.35cqw;line-height:1.45;font-weight:300}
-  .footerline{display:flex;align-items:center;gap:1.5cqw;margin-top:2.4cqw;
-    font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.58cqw;letter-spacing:.18em;
-    text-transform:uppercase;color:rgba(238,242,247,.6)}
-  .footerline .sl{width:3cqw;height:1px;background:rgba(255,255,255,.22)}
-
-  /* ---------- logo ---------- */
-  .logo-lock{display:flex;align-items:center;gap:.75cqw}
-  .logo-lock .sq{width:1.5cqw;height:1.5cqw;border-radius:2px;
-    background:linear-gradient(135deg,var(--orange),#ff3d00);position:relative}
-  .logo-lock .sq::after{content:"";position:absolute;inset:.42cqw;border:1px solid rgba(0,0,0,.45);border-radius:1px}
-  .logo-lock .txt{font-weight:700;letter-spacing:.16em;font-size:1.02cqw;text-transform:uppercase}
-  .logo-lock .txt small{display:block;font-family:"JetBrains Mono",ui-monospace,monospace;
-    font-weight:400;font-size:.44cqw;letter-spacing:.34em;color:rgba(238,242,247,.6);margin-top:.22cqw}
-
-  /* ---------- burnt-in captions ---------- */
-  .cap{position:absolute;left:0;right:0;bottom:2.6cqw;display:flex;justify-content:center;pointer-events:none}
-  .cap span{max-width:66cqw;text-align:center;font-size:.98cqw;line-height:1.5;
-    color:rgba(255,255,255,.94);text-shadow:0 1px 12px rgba(0,0,0,.9);
-    background:rgba(4,8,14,.42);backdrop-filter:blur(3px);
-    padding:.5cqw 1.1cqw;border-radius:3px;border:1px solid rgba(255,255,255,.07)}
-
-  /* scene number */
-  .scene-no{position:absolute;right:6.4cqw;top:5.2cqw;display:flex;align-items:center;gap:.8cqw;
-    font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.6cqw;letter-spacing:.24em;
-    color:rgba(238,242,247,.45)}
-  .scene-no .cur{color:var(--ink)}
-
-  /* ---------- poster ---------- */
-  .poster{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;gap:1.6cqw;text-align:center;
-    background:radial-gradient(80% 80% at 50% 40%, rgba(4,8,14,.62), rgba(4,8,14,.94));
-    backdrop-filter:blur(3px);transition:opacity .45s ease,visibility .45s}
+  .poster{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:16px;text-align:center;padding:24px;
+    background:radial-gradient(80% 80% at 50% 40%, rgba(4,8,14,.55), rgba(4,8,14,.94));
+    backdrop-filter:blur(2px);transition:opacity .4s ease,visibility .4s}
   .poster.hide{opacity:0;visibility:hidden}
-  .poster .p-kick{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.66cqw;
-    letter-spacing:.3em;text-transform:uppercase;color:rgba(255,106,26,.95)}
-  .poster h1{margin:0;font-size:3.4cqw;line-height:1.02;letter-spacing:-.035em;font-weight:700;max-width:24ch}
+  .poster .p-kick{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.3em;
+    text-transform:uppercase;color:rgba(255,106,26,.95)}
+  .poster h1{margin:0;font-size:clamp(22px,3.1vw,46px);line-height:1.05;letter-spacing:-.035em;
+    font-weight:700;max-width:22ch}
   .poster h1 em{font-style:normal;color:var(--orange)}
-  .poster p{margin:0;font-size:.95cqw;color:rgba(238,242,247,.62);font-weight:300}
-  .playbtn{display:inline-flex;align-items:center;gap:.9cqw;margin-top:.6cqw;
-    padding:1.05cqw 2cqw;border-radius:100px;border:0;cursor:pointer;
-    background:linear-gradient(135deg,var(--orange),#ff4a00);color:#1a0a00;
-    font-family:inherit;font-weight:700;font-size:1.02cqw;letter-spacing:.01em;
-    box-shadow:0 1.6cqw 3.4cqw -1.2cqw rgba(255,106,26,.75);
-    transition:transform .18s ease,box-shadow .18s ease}
-  .playbtn:hover{transform:translateY(-2px);box-shadow:0 2cqw 4cqw -1.2cqw rgba(255,106,26,.9)}
-  .playbtn .ico{width:0;height:0;border-left:1.05cqw solid #1a0a00;
-    border-top:.62cqw solid transparent;border-bottom:.62cqw solid transparent}
-  .playbtn.ghost{background:transparent;color:var(--ink);border:1px solid rgba(255,255,255,.22);
-    box-shadow:none;font-weight:500;padding:.8cqw 1.4cqw;font-size:.85cqw}
-  .playbtn.ghost:hover{border-color:rgba(255,255,255,.45)}
+  .poster p{margin:0;font-size:clamp(12px,1vw,16px);color:rgba(238,242,247,.62);font-weight:300}
+  .playbtn{display:inline-flex;align-items:center;gap:12px;margin-top:6px;padding:15px 30px;border:0;
+    border-radius:100px;cursor:pointer;background:linear-gradient(135deg,var(--orange),#ff4a00);
+    color:#1a0a00;font-family:inherit;font-weight:700;font-size:clamp(14px,1.1vw,17px);
+    box-shadow:0 22px 50px -18px rgba(255,106,26,.8);transition:transform .18s,box-shadow .18s}
+  .playbtn:hover{transform:translateY(-2px);box-shadow:0 28px 60px -18px rgba(255,106,26,.95)}
+  .playbtn .ico{width:0;height:0;border-left:15px solid #1a0a00;
+    border-top:9px solid transparent;border-bottom:9px solid transparent}
 
-  /* ---------- controls ---------- */
-  .controls{
-    position:absolute;left:0;right:0;bottom:0;z-index:20;padding:1.1cqw 1.6cqw 1.2cqw;
-    display:flex;align-items:center;gap:1.1cqw;
-    background:linear-gradient(0deg,rgba(3,7,11,.94),rgba(3,7,11,.55) 60%,transparent);
+  .controls{position:absolute;left:0;right:0;bottom:0;padding:14px 18px 15px;display:flex;align-items:center;gap:12px;
+    background:linear-gradient(0deg,rgba(3,7,11,.94),rgba(3,7,11,.5) 60%,transparent);
     opacity:0;transition:opacity .3s ease;
-    font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.56cqw;letter-spacing:.1em;
-  }
-  .player:hover .controls,.player.show-controls .controls,.player.paused-state .controls{opacity:1}
+    font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.1em}
+  .player:hover .controls,.player.touched .controls{opacity:1}
   .ctrl{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--ink);
-    border-radius:5px;height:2.1cqw;min-width:2.1cqw;display:inline-flex;align-items:center;
-    justify-content:center;cursor:pointer;padding:0 .5cqw;font-family:inherit;font-size:.56cqw;
-    letter-spacing:.12em;transition:background .2s}
-  .ctrl:hover{background:rgba(255,255,255,.18)}
-  .ctrl svg{width:1.05cqw;height:1.05cqw;fill:currentColor}
-  .scrub{position:relative;flex:1;height:2.1cqw;display:flex;align-items:center;cursor:pointer}
-  .scrub .track{position:relative;width:100%;height:3px;border-radius:3px;background:rgba(255,255,255,.16)}
-  .scrub .fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:3px;
-    background:linear-gradient(90deg,#ff4a00,var(--orange-2))}
-  .scrub .tick{position:absolute;top:-2px;width:1px;height:7px;background:rgba(255,255,255,.4)}
-  .scrub .knob{position:absolute;top:50%;left:0;width:7px;height:7px;border-radius:50%;
-    background:#fff;transform:translate(-50%,-50%);box-shadow:0 0 0 2px rgba(255,106,26,.5)}
-  .time{color:rgba(238,242,247,.72);min-width:7cqw;text-align:right}
+    border-radius:5px;height:34px;min-width:34px;display:inline-flex;align-items:center;justify-content:center;
+    cursor:pointer;padding:0 9px;font-family:inherit;font-size:11px;letter-spacing:.12em;transition:background .2s}
+  .ctrl:hover{background:rgba(255,255,255,.2)}
+  .scrub{flex:1;height:34px;display:flex;align-items:center;cursor:pointer}
+  .track{position:relative;width:100%;height:3px;border-radius:3px;background:rgba(255,255,255,.16)}
+  .fill{position:absolute;inset:0 auto 0 0;width:0;border-radius:3px;
+    background:linear-gradient(90deg,#ff4a00,#ffa06b)}
+  .knob{position:absolute;top:50%;left:0;width:8px;height:8px;border-radius:50%;background:#fff;
+    transform:translate(-50%,-50%);box-shadow:0 0 0 2px rgba(255,106,26,.5)}
+  .time{min-width:104px;text-align:right;color:rgba(238,242,247,.72)}
 
-  .hintbar{width:min(96vw,168vh);display:flex;justify-content:space-between;gap:14px;
-    font-family:"JetBrains Mono",ui-monospace,monospace;font-size:10px;letter-spacing:.14em;
-    text-transform:uppercase;color:rgba(238,242,247,.34)}
-  .hintbar kbd{border:1px solid rgba(255,255,255,.16);border-radius:3px;padding:1px 5px;
-    color:rgba(238,242,247,.6)}
-
-  @media (max-width:760px){
-    .topbar,.hintbar{font-size:8.5px}
-  }
+  .hintbar{width:min(96vw,168vh);display:flex;justify-content:space-between;gap:14px}
+  .hintbar kbd{border:1px solid rgba(255,255,255,.16);border-radius:3px;padding:1px 5px;color:rgba(238,242,247,.6)}
+  @media (max-width:720px){ .topbar,.hintbar{font-size:8.5px} .dl{padding:4px 7px} }
 </style>
 </head>
 <body>
 
-<div class="topbar">
+<div class="topbar mono">
   <div class="brandline">
-    <span class="mark"></span>
-    <b>Travex Global Forwarding</b>
-    <span style="opacity:.5">/ film promo</span>
+    <span class="mark"></span><b>Travex Global Forwarding</b><span style="opacity:.5">/ film promo</span>
   </div>
   <div class="right">
     <span>16:9 · 1080p · 1 min 17</span>
     <a class="dl" href="export/travex-promo-16x9.mp4" download>↓ Télécharger le .mp4</a>
-    <span class="dotlive"></span><span>v1.0</span>
   </div>
 </div>
 
-<div class="player paused-state" id="player">
-  <div class="stage" id="stage">
+<div class="player touched" id="player">
+  <video id="vid" src="export/travex-promo-16x9.mp4" poster="assets/img/06-douala.jpg"
+         preload="metadata" playsinline></video>
 
-    <!-- ================= SCENE 1 ================= -->
-    <section class="scene" id="s1" data-scene="1">
-      <div class="bg" style="background-image:url(assets/img/06-douala.jpg);--dur:14s"></div>
-      <div class="grade"></div>
-      <div class="grid-lines"></div>
-      <div class="pad s1-grid">
-        <div>
-          <div class="anim fade eyebrow" style="--d:0.15s;--dur:.7s"><span class="pip"></span>Renchen, Allemagne · Douala, Cameroun</div>
-          <h1 class="display">
-            <span class="anim rise" style="--d:0.45s;--dur:.95s">Vos marchandises</span>
-            <span class="anim rise" style="--d:0.62s;--dur:.95s">méritent mieux</span>
-            <span class="anim rise hot" style="--d:0.79s;--dur:.95s">qu'un simple transport.</span>
-          </h1>
-          <div class="anim grow rule" style="--d:1.25s;--dur:1s"></div>
-          <p class="anim fade lede" style="--d:1.45s;--dur:.9s">
-            Fret aérien, maritime, Ro-Ro, entreposage, import-export et douane :
-            un seul interlocuteur, du premier kilomètre à la livraison finale.
-          </p>
-          <div class="anim fade chips" style="--d:1.8s;--dur:.8s">
-            <span class="chip">IATA</span><span class="chip">OEA</span><span class="chip">ISO 9001</span>
-          </div>
-        </div>
-        <div class="s1-right">
-          <svg class="routemap anim fade" viewBox="0 0 360 340" style="--d:1.1s;--dur:.9s" aria-hidden="true">
-            <defs>
-              <linearGradient id="g1" x1="0" y1="1" x2="1" y2="0">
-                <stop offset="0" stop-color="#ff6a1a" stop-opacity=".25"/>
-                <stop offset="1" stop-color="#ff6a1a"/>
-              </linearGradient>
-            </defs>
-            <g opacity=".28" stroke="rgba(255,255,255,.35)" stroke-width=".6">
-              <path d="M20 60H340M20 140H340M20 220H340M20 300H340M60 20V320M150 20V320M240 20V320M320 20V320"/>
-            </g>
-            <path d="M62 258 C 128 120, 210 96, 300 74" fill="none" stroke="url(#g1)" stroke-width="2"
-                  stroke-dasharray="900" stroke-linecap="round" class="anim draw" style="--d:1.35s;--dur:1.6s;--len:900"/>
-            <g class="anim fade" style="--d:2.1s;--dur:.6s">
-              <circle cx="62" cy="258" r="4.5" fill="#fff"/>
-              <circle cx="62" cy="258" r="9" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1"/>
-              <text x="62" y="288" fill="rgba(255,255,255,.85)" font-family="JetBrains Mono, monospace"
-                    font-size="9.5" letter-spacing="2" text-anchor="middle">RENCHEN · DE</text>
-            </g>
-            <g class="anim fade" style="--d:2.45s;--dur:.6s">
-              <circle cx="300" cy="74" r="4.5" fill="#ff6a1a"/>
-              <circle cx="300" cy="74" r="12" fill="none" stroke="rgba(255,106,26,.55)" stroke-width="1" class="pulse-circle"/>
-              <text x="300" y="52" fill="#ffa06b" font-family="JetBrains Mono, monospace"
-                    font-size="9.5" letter-spacing="2" text-anchor="middle">DOUALA · CM</text>
-            </g>
-            <text x="150" y="150" fill="rgba(255,255,255,.5)" font-family="JetBrains Mono, monospace"
-                  font-size="8" letter-spacing="2" transform="rotate(-8 150 150)">FRET AÉRIEN · MARITIME</text>
-          </svg>
-        </div>
-      </div>
-      <div class="anim fade scene-no" style="--d:.2s;--dur:.6s"><span class="cur">01</span>/07</div>
-      <div class="anim fade cap" style="--d:.9s;--dur:.6s"><span>De l'Allemagne au Cameroun, et partout dans le monde : Travex organise vos expéditions, du premier kilomètre à la livraison finale.</span></div>
-      <div class="grain"></div><div class="vignette"></div>
-    </section>
+  <div class="poster" id="poster">
+    <div class="p-kick">Fonds animés · voix off française · 1 min 17</div>
+    <h1>Travex Global Forwarding<br><em>Plus de performance, plus de succès.</em></h1>
+    <p>Fret aérien · maritime · Ro-Ro · entreposage · import-export &amp; douane</p>
+    <button class="playbtn" id="playBig"><span class="ico"></span> Lancer la vidéo</button>
+  </div>
 
-    <!-- ================= SCENE 2 : AIR ================= -->
-    <section class="scene" id="s2" data-scene="2">
-      <div class="bg" style="background-image:url(assets/img/01-air-freight.jpg);--dur:10.4s"></div>
-      <div class="grade soft"></div>
-      <div class="pad">
-        <div class="content">
-          <div class="anim fade kicker" style="--d:.1s;--dur:.6s">01<span class="sep">/</span>Fret aérien</div>
-          <h2 class="anim rise h2" style="--d:.28s;--dur:.85s">Quand chaque <em>heure</em> compte.</h2>
-          <p class="anim fade lede" style="--d:.55s;--dur:.8s">
-            Nos partenaires aériens spécialisés font partir vos envois urgents et vos
-            marchandises de valeur, avec un délai de transport réduit.
-          </p>
-          <ul class="points">
-            <li class="anim slideL" style="--d:.85s;--dur:.7s"><span class="tick"></span>Marchandises urgentes et envois de valeur</li>
-            <li class="anim slideL" style="--d:1.02s;--dur:.7s"><span class="tick"></span>Réseau de partenaires et de compagnies aériennes</li>
-            <li class="anim slideL" style="--d:1.19s;--dur:.7s"><span class="tick"></span>Prise en charge et suivi de bout en bout</li>
-          </ul>
-          <div class="anim fade badge-row" style="--d:1.5s;--dur:.7s">
-            <span class="badge">Aérien</span><span class="badge">Porte-à-porte</span><span class="badge">Urgent</span>
-          </div>
-        </div>
-      </div>
-      <div class="anim fade scene-no" style="--d:.2s;--dur:.6s"><span class="cur">02</span>/07</div>
-      <div class="anim fade cap" style="--d:.7s;--dur:.6s"><span>Fret aérien : quand chaque heure compte, vos envois urgents et vos marchandises de valeur arrivent vite, en toute sécurité.</span></div>
-      <div class="grain"></div><div class="vignette"></div>
-    </section>
-
-    <!-- ================= SCENE 3 : SEA ================= -->
-    <section class="scene" id="s3" data-scene="3">
-      <div class="bg" style="background-image:url(assets/img/02-sea-containers.jpg);--dur:9.6s;background-position:70% 50%"></div>
-      <div class="grade soft"></div>
-      <div class="pad">
-        <div class="content">
-          <div class="anim fade kicker" style="--d:.1s;--dur:.6s">02<span class="sep">/</span>Fret maritime</div>
-          <h2 class="anim rise h2" style="--d:.28s;--dur:.85s">Conteneurs &amp; <em>groupage</em>.</h2>
-          <p class="anim fade lede" style="--d:.55s;--dur:.8s">
-            Un réseau de partenaires spécialisés et de compagnies maritimes, pour des
-            solutions adaptées à vos volumes comme à vos destinations.
-          </p>
-          <ul class="points">
-            <li class="anim slideL" style="--d:.85s;--dur:.7s"><span class="tick"></span>Conteneur complet ou groupage (LCL)</li>
-            <li class="anim slideL" style="--d:1.02s;--dur:.7s"><span class="tick"></span>Mise à disposition, préparation et expédition</li>
-            <li class="anim slideL" style="--d:1.19s;--dur:.7s"><span class="tick"></span>Départs réguliers vers l'Afrique de l'Ouest et centrale</li>
-          </ul>
-          <div class="anim fade badge-row" style="--d:1.5s;--dur:.7s">
-            <span class="badge">FCL</span><span class="badge">LCL</span><span class="badge">Conteneurs</span>
-          </div>
-        </div>
-      </div>
-      <div class="anim fade scene-no" style="--d:.2s;--dur:.6s"><span class="cur">03</span>/07</div>
-      <div class="anim fade cap" style="--d:.7s;--dur:.6s"><span>Fret maritime, conteneurs et groupage : des solutions flexibles, adaptées à vos volumes comme à vos destinations.</span></div>
-      <div class="grain"></div><div class="vignette"></div>
-    </section>
-
-    <!-- ================= SCENE 4 : RO-RO ================= -->
-    <section class="scene" id="s4" data-scene="4">
-      <div class="bg" style="background-image:url(assets/img/04-roro-vehicles.jpg);--dur:7.9s"></div>
-      <div class="grade"></div>
-      <div class="pad">
-        <div class="content">
-          <div class="anim fade kicker" style="--d:.1s;--dur:.6s">03<span class="sep">/</span>Ro-Ro &amp; véhicules</div>
-          <h2 class="anim rise h2" style="--d:.28s;--dur:.85s">Vos véhicules, <em>embarqués</em> à bord.</h2>
-          <p class="anim fade lede" style="--d:.58s;--dur:.8s">
-            Voitures et engins expédiés par navires spécialement conçus pour leur transport,
-            en collaboration avec nos partenaires et les compagnies maritimes.
-          </p>
-          <ul class="points">
-            <li class="anim slideL" style="--d:.9s;--dur:.7s"><span class="tick"></span>Roll-on / Roll-off, en direct à bord</li>
-            <li class="anim slideL" style="--d:1.07s;--dur:.7s"><span class="tick"></span>Véhicules, engins et matériel roulant</li>
-          </ul>
-        </div>
-      </div>
-      <div class="anim fade scene-no" style="--d:.2s;--dur:.6s"><span class="cur">04</span>/07</div>
-      <div class="anim fade cap" style="--d:.7s;--dur:.6s"><span>Véhicules et engins : embarquement Ro-Ro vers l'international, avec des compagnies maritimes spécialisées.</span></div>
-      <div class="grain"></div><div class="vignette"></div>
-    </section>
-
-    <!-- ================= SCENE 5 : LOGISTICS ================= -->
-    <section class="scene" id="s5" data-scene="5">
-      <div class="bg" style="background-image:url(assets/img/03-warehouse.jpg);--dur:13.8s;background-position:60% 55%"></div>
-      <div class="grade"></div>
-      <div class="pad">
-        <div class="s5">
-          <div>
-            <div class="anim fade kicker" style="--d:.1s;--dur:.6s">04<span class="sep">/</span>Logistique &amp; entrepôt — Renchen</div>
-            <h2 class="anim rise h2" style="--d:.28s;--dur:.85s">Réceptionner, stocker, <em>préparer</em>.</h2>
-            <p class="anim fade lede" style="--d:.55s;--dur:.8s">
-              Notre plateforme logistique de Renchen, en Allemagne, accompagne vos
-              opérations d'import et d'export : emballage, entreposage sécurisé,
-              préparation puis départ vers l'étape suivante.
-            </p>
-            <div class="svc">
-              <div class="cell anim zoomIn" style="--d:.85s;--dur:.65s">
-                <div class="n">01</div><div class="t">Emballage &amp; stockage</div>
-                <div class="s">Conditionnement et protection</div>
-              </div>
-              <div class="cell anim zoomIn" style="--d:.97s;--dur:.65s">
-                <div class="n">02</div><div class="t">Entreposage sécurisé</div>
-                <div class="s">Plateformes en Allemagne &amp; à l'international</div>
-              </div>
-              <div class="cell anim zoomIn" style="--d:1.09s;--dur:.65s">
-                <div class="n">03</div><div class="t">Transport terrestre</div>
-                <div class="s">Groupage et lots complets en Europe</div>
-              </div>
-              <div class="cell anim zoomIn" style="--d:1.21s;--dur:.65s">
-                <div class="n">04</div><div class="t">Import / export &amp; douane</div>
-                <div class="s">Formalités et pilotage des flux</div>
-              </div>
-            </div>
-          </div>
-          <div class="thumbs">
-            <figure class="thumb tall anim slideR" style="--d:1.4s;--dur:.8s">
-              <img src="assets/img/03-warehouse.jpg" alt="Entrepôt logistique">
-              <figcaption>Plateforme · Renchen</figcaption>
-            </figure>
-            <figure class="thumb anim slideR" style="--d:1.55s;--dur:.8s">
-              <img src="assets/img/05-truck-europe.jpg" alt="Transport terrestre européen">
-              <figcaption>Transport terrestre</figcaption>
-            </figure>
-            <figure class="thumb anim slideR" style="--d:1.7s;--dur:.8s;grid-column:1 / -1">
-              <img src="assets/img/02-sea-containers.jpg" alt="Conteneurs au départ" style="height:13.5cqw;object-position:70% 50%">
-              <figcaption>Départ conteneurs · Europe → Afrique</figcaption>
-            </figure>
-          </div>
-        </div>
-      </div>
-      <div class="anim fade scene-no" style="--d:.2s;--dur:.6s"><span class="cur">05</span>/07</div>
-      <div class="anim fade cap" style="--d:.7s;--dur:.6s"><span>À Renchen, notre plateforme réceptionne, stocke et prépare vos marchandises. Import, export, douane : nous pilotons chaque étape.</span></div>
-      <div class="grain"></div><div class="vignette"></div>
-    </section>
-
-    <!-- ================= SCENE 6 : TRUST ================= -->
-    <section class="scene" id="s6" data-scene="6">
-      <div class="bg" style="background-image:url(assets/img/07-trust-team.jpg);--dur:9s;background-position:45% 45%"></div>
-      <div class="grade"></div>
-      <div class="pad">
-        <div class="content">
-          <div class="anim fade kicker" style="--d:.1s;--dur:.6s">05<span class="sep">/</span>Notre différence</div>
-          <div class="quote">
-            <div class="anim fade qmark" style="--d:.3s;--dur:.6s">&ldquo;</div>
-            <blockquote class="anim rise" style="--d:.42s;--dur:.9s">
-              Un interlocuteur. Pas un guichet.<br>
-              Nous nous adaptons à vos besoins, <em>pas l'inverse.</em>
-            </blockquote>
-            <div class="anim fade who" style="--d:.95s;--dur:.7s"><span class="bar"></span>Une relation de confiance, depuis des années</div>
-          </div>
-          <p class="anim fade lede" style="--d:1.15s;--dur:.8s">
-            Notre personnel donne une touche personnelle à chaque dossier et vous
-            accompagne tout au long du processus.
-          </p>
-        </div>
-      </div>
-      <div class="anim fade scene-no" style="--d:.2s;--dur:.6s"><span class="cur">06</span>/07</div>
-      <div class="anim fade cap" style="--d:.7s;--dur:.6s"><span>Et surtout, un interlocuteur. Pas un guichet. Nous apprenons à vous connaître, et nous nous adaptons à vos besoins.</span></div>
-      <div class="grain"></div><div class="vignette"></div>
-    </section>
-
-    <!-- ================= SCENE 7 : CTA ================= -->
-    <section class="scene" id="s7" data-scene="7">
-      <div class="bg" style="background-image:url(assets/img/05-truck-europe.jpg);--dur:12.4s;background-position:50% 55%"></div>
-      <div class="grade center"></div>
-      <div class="grid-lines" style="opacity:.08"></div>
-      <div class="pad">
-        <div class="s7">
-          <div class="anim fade logo-lock" style="--d:.2s;--dur:.7s">
-            <span class="sq"></span>
-            <span class="txt">Travex<small>Global Forwarding</small></span>
-          </div>
-          <h2 class="anim rise cta-title" style="--d:.45s;--dur:.9s;margin-top:2.2cqw">
-            Demandez votre <em>cotation gratuite</em>.
-          </h2>
-          <div class="anim zoomIn pill" style="--d:1.05s;--dur:.7s">
-            travex-global-forwarding.com <span class="arrow">→</span>
-          </div>
-          <div class="places">
-            <div class="place anim slideL" style="--d:1.35s;--dur:.75s">
-              <div class="city">Renchen <span class="cc">ALLEMAGNE · SIÈGE</span></div>
-              <div class="addr">Im Brünnel 2 — 77871 Renchen<br>+49 176 506 18495<br>info@travexglobalforwarding.com</div>
-            </div>
-            <div class="place anim slideR" style="--d:1.5s;--dur:.75s">
-              <div class="city">Douala <span class="cc">CAMEROUN</span></div>
-              <div class="addr">Bonamoussadi<br>Liaison Francfort → Douala<br>Contact : +49 176 506 18495</div>
-            </div>
-          </div>
-          <div class="anim fade footerline" style="--d:1.9s;--dur:.8s">
-            <span class="sl"></span>More performance — more success<span class="sl"></span>
-          </div>
-          <div class="anim fade badge-row" style="--d:2.1s;--dur:.8s">
-            <span class="badge">IATA</span><span class="badge">OEA</span><span class="badge">ISO 9001</span>
-            <span class="badge">Allemagne · France · Suisse</span>
-          </div>
-        </div>
-      </div>
-      <div class="anim fade cap" style="--d:.9s;--dur:.6s"><span>Travex Global Forwarding. Renchen, Allemagne. Douala, Cameroun. Plus de performance, plus de succès.</span></div>
-      <div class="grain"></div><div class="vignette"></div>
-    </section>
-
-    <!-- ================= POSTER ================= -->
-    <div class="poster" id="poster">
-      <div class="p-kick">Film de présentation · 1 min 17</div>
-      <h1>Travex Global Forwarding<br><em>Plus de performance, plus de succès.</em></h1>
-      <p>Fret aérien · maritime · Ro-Ro · entreposage · import-export &amp; douane</p>
-      <button class="playbtn" id="playBig"><span class="ico"></span> Lancer la vidéo</button>
-      <button class="playbtn ghost" id="playMute">Lancer sans le son</button>
-    </div>
-
-    <!-- ================= CONTROLS ================= -->
-    <div class="controls" id="controls">
-      <button class="ctrl" id="btnPlay" title="Lecture / pause (espace)" aria-label="Lecture ou pause">
-        <svg id="icoPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        <svg id="icoPause" viewBox="0 0 24 24" style="display:none"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
-      </button>
-      <button class="ctrl" id="btnRestart" title="Revenir au début" aria-label="Revenir au début">
-        <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/></svg>
-      </button>
-      <div class="scrub" id="scrub">
-        <div class="track"><div class="fill" id="fill"></div><div id="ticks"></div><div class="knob" id="knob"></div></div>
-      </div>
-      <div class="time" id="time">00:00 / 01:17</div>
-      <button class="ctrl" id="btnMute" title="Son" aria-label="Couper le son">
-        <svg id="icoSound" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
-        <svg id="icoMuted" viewBox="0 0 24 24" style="display:none"><path d="M4 9v6h4l5 4V5L8 9H4zm14.6.6-1.4-1.4L15 10.4 12.9 8.3l-1.4 1.4L13.6 12l-2.1 2.1 1.4 1.4 2.1-2.1 2.2 2.2 1.4-1.4-2.2-2.2z"/></svg>
-      </button>
-      <button class="ctrl" id="btnFull" title="Plein écran" aria-label="Plein écran">
-        <svg viewBox="0 0 24 24"><path d="M4 4h6v2H6v4H4V4zm10 0h6v6h-2V6h-4V4zM4 14h2v4h4v2H4v-6zm14 0h2v6h-6v-2h4v-4z"/></svg>
-      </button>
-    </div>
-
+  <div class="controls">
+    <button class="ctrl" id="btnPlay" aria-label="Lecture ou pause">
+      <span id="icoPlay">▶</span><span id="icoPause" style="display:none">❚❚</span>
+    </button>
+    <div class="scrub" id="scrub"><div class="track"><div class="fill" id="fill"></div>
+      <div class="knob" id="knob"></div></div></div>
+    <div class="time" id="time">00:00 / 01:17</div>
+    <button class="ctrl" id="btnMute" aria-label="Son">SON</button>
+    <button class="ctrl" id="btnFull" aria-label="Plein écran">⤢</button>
   </div>
 </div>
 
-<div class="hintbar">
-  <span>Vidéo générée · images &amp; voix off originales · textes issus du site Travex</span>
-  <span><kbd>espace</kbd> lecture · <kbd>←</kbd><kbd>→</kbd> naviguer · <kbd>f</kbd> plein écran</span>
+<div class="hintbar mono">
+  <span>MP4 · 1920×1080 · 30 i/s · H.264 / AAC</span>
+  <span><kbd>espace</kbd> lecture · <kbd>←</kbd><kbd>→</kbd> ±5 s · <kbd>f</kbd> plein écran</span>
 </div>
-
-<audio id="a1" src="assets/audio/vo-01.mp3" preload="auto"></audio>
-<audio id="a2" src="assets/audio/vo-02.mp3" preload="auto"></audio>
-<audio id="a3" src="assets/audio/vo-03.mp3" preload="auto"></audio>
-<audio id="a4" src="assets/audio/vo-04.mp3" preload="auto"></audio>
-<audio id="a5" src="assets/audio/vo-05.mp3" preload="auto"></audio>
-<audio id="a6" src="assets/audio/vo-06.mp3" preload="auto"></audio>
-<audio id="a7" src="assets/audio/vo-07.mp3" preload="auto"></audio>
 
 <script>
-/* ------------------------------------------------------------------
-   Timeline : une scène = un plan. Durées = voix off mesurée + respiration.
-   ------------------------------------------------------------------ */
-const SCENES = [
-  { id:'s1', start:0,     dur:14.0, audio:'a1', voOffset:0.55 },
-  { id:'s2', start:14.0,  dur:10.4, audio:'a2', voOffset:0.35 },
-  { id:'s3', start:24.4,  dur:9.6,  audio:'a3', voOffset:0.35 },
-  { id:'s4', start:34.0,  dur:7.9,  audio:'a4', voOffset:0.35 },
-  { id:'s5', start:41.9,  dur:13.8, audio:'a5', voOffset:0.35 },
-  { id:'s6', start:55.7,  dur:9.0,  audio:'a6', voOffset:0.35 },
-  { id:'s7', start:64.7,  dur:12.4, audio:'a7', voOffset:0.45 },
-];
-const TOTAL = SCENES[SCENES.length - 1].start + SCENES[SCENES.length - 1].dur;
-
+const vid = document.getElementById('vid');
 const player = document.getElementById('player');
-const stage  = document.getElementById('stage');
 const poster = document.getElementById('poster');
-const fill   = document.getElementById('fill');
-const knob   = document.getElementById('knob');
+const fill = document.getElementById('fill');
+const knob = document.getElementById('knob');
 const timeEl = document.getElementById('time');
-const scrub  = document.getElementById('scrub');
-const sceneEls = SCENES.map(s => document.getElementById(s.id));
-const audios = {};
-['a1','a2','a3','a4','a5','a6','a7'].forEach(id => audios[id] = document.getElementById(id));
+const scrub = document.getElementById('scrub');
 
-let playing = false, t = 0, lastFrame = 0, muted = false;
+const fmt = s => {
+  s = Math.max(0, Math.floor(s || 0));
+  return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+};
 
-/* ---- collecte des animations CSS, pilotées à la main (WAAPI) ---- */
-const animIndex = []; // { el, anims:[], d:ms, sceneIdx }
-function collectAnimations(){
-  animIndex.length = 0;
-  SCENES.forEach((sc, i) => {
-    const root = sceneEls[i];
-    root.querySelectorAll('.anim, .bg').forEach(el => {
-      const cs = getComputedStyle(el);
-      const dRaw = cs.getPropertyValue('--d').trim() || '0s';
-      const d = dRaw.endsWith('ms') ? parseFloat(dRaw) : parseFloat(dRaw) * 1000;
-      const list = el.getAnimations();
-      if (!list.length) return;
-      list.forEach(a => { a.pause(); a.currentTime = 0; });
-      animIndex.push({ el, anims:list, d: isNaN(d) ? 0 : d, sceneIdx:i });
-    });
-  });
-}
-
-function render(time, isPlaying){
-  // scène active
-  let idx = 0;
-  for (let i = 0; i < SCENES.length; i++){
-    if (time >= SCENES[i].start) idx = i;
-  }
-  const sc = SCENES[idx];
-  const local = Math.max(0, time - sc.start);
-
-  sceneEls.forEach((el, i) => el.classList.toggle('live', i === idx));
-
-  // animations : on avance le temps local de chaque élément
-  const localMs = local * 1000;
-  for (const entry of animIndex){
-    if (entry.sceneIdx !== idx){
-      if (entry.anims[0].currentTime !== 0) entry.anims.forEach(a => a.currentTime = 0);
-      continue;
-    }
-    const v = Math.max(0, localMs - entry.d);
-    entry.anims.forEach(a => { if (Math.abs(a.currentTime - v) > 8) a.currentTime = v; });
-  }
-
-  // audio de la scène
-  const target = local - sc.voOffset;
-  const a = audios[sc.audio];
-  for (const id in audios){
-    if (audios[id] !== a && !audios[id].paused) audios[id].pause();
-  }
-  const inWindow = isPlaying && target >= 0;
-  if (inWindow && a){
-    a.muted = muted;
-    if (a.paused){
-      const dur = isFinite(a.duration) ? a.duration : null;
-      try { a.currentTime = dur ? Math.min(target, dur - 0.05) : target; } catch(e){}
-      a.play().catch(()=>{});
-    } else if (Math.abs(a.currentTime - target) > 0.28){
-      try { a.currentTime = target; } catch(e){}
-    }
-  } else if (a && !a.paused){
-    a.pause();
-  }
-
-  // barre de progression
-  const p = Math.min(1, time / TOTAL);
+function paint() {
+  const d = vid.duration || 77;
+  const p = Math.min(1, (vid.currentTime || 0) / d);
   fill.style.width = (p * 100) + '%';
   knob.style.left = (p * 100) + '%';
-  timeEl.textContent = fmt(time) + ' / ' + fmt(TOTAL);
+  timeEl.textContent = fmt(vid.currentTime) + ' / ' + fmt(d);
 }
-
-function fmt(s){
-  s = Math.max(0, Math.floor(s));
-  return String(Math.floor(s / 60)).padStart(2,'0') + ':' + String(s % 60).padStart(2,'0');
-}
-
-function loop(now){
-  if (!lastFrame) lastFrame = now;
-  const dt = (now - lastFrame) / 1000;
-  lastFrame = now;
-  if (playing){
-    t += dt;
-    if (t >= TOTAL){ t = TOTAL; pause(true); }
-  }
-  render(t, playing);
-  requestAnimationFrame(loop);
-}
-
-function play(){
-  if (t >= TOTAL - 0.05) t = 0;
-  playing = true;
-  poster.classList.add('hide');
-  player.classList.remove('paused-state');
-  player.classList.add('show-controls');
-  document.getElementById('icoPlay').style.display = 'none';
-  document.getElementById('icoPause').style.display = '';
-  // déverrouille la lecture audio (nécessite un geste utilisateur, fait ici)
-  render(t, true);
-  setTimeout(() => player.classList.remove('show-controls'), 2200);
-}
-
-function pause(toEnd){
-  playing = false;
-  for (const id in audios) audios[id].pause();
-  player.classList.add('paused-state');
+vid.addEventListener('timeupdate', paint);
+vid.addEventListener('loadedmetadata', paint);
+vid.addEventListener('ended', () => {
   document.getElementById('icoPlay').style.display = '';
   document.getElementById('icoPause').style.display = 'none';
-  if (toEnd) poster.classList.add('hide');
-}
+  poster.classList.remove('hide');
+});
 
-function seek(time){
-  t = Math.max(0, Math.min(TOTAL, time));
-  for (const id in audios){ audios[id].pause(); try { audios[id].currentTime = 0; } catch(e){} }
-  render(t, playing);
+function play() {
+  poster.classList.add('hide');
+  vid.play().catch(() => {});
+  document.getElementById('icoPlay').style.display = 'none';
+  document.getElementById('icoPause').style.display = '';
 }
+document.getElementById('playBig').addEventListener('click', play);
+document.getElementById('btnPlay').addEventListener('click', () => vid.paused ? play() : vid.pause());
+vid.addEventListener('pause', () => {
+  document.getElementById('icoPlay').style.display = '';
+  document.getElementById('icoPause').style.display = 'none';
+});
 
-/* ---- contrôles ---- */
-document.getElementById('playBig').addEventListener('click', () => { muted = false; setMuteIcon(); play(); });
-document.getElementById('playMute').addEventListener('click', () => { muted = true; setMuteIcon(); play(); });
-document.getElementById('btnPlay').addEventListener('click', () => playing ? pause() : play());
-document.getElementById('btnRestart').addEventListener('click', () => { seek(0); play(); });
-document.getElementById('btnMute').addEventListener('click', () => { muted = !muted; setMuteIcon(); for (const id in audios) audios[id].muted = muted; });
+document.getElementById('btnMute').addEventListener('click', e => {
+  vid.muted = !vid.muted;
+  e.currentTarget.textContent = vid.muted ? 'MUET' : 'SON';
+});
 document.getElementById('btnFull').addEventListener('click', () => {
-  if (!document.fullscreenElement) player.requestFullscreen?.().catch(()=>{});
+  if (!document.fullscreenElement) player.requestFullscreen?.().catch(() => {});
   else document.exitFullscreen?.();
 });
-function setMuteIcon(){
-  document.getElementById('icoSound').style.display = muted ? 'none' : '';
-  document.getElementById('icoMuted').style.display = muted ? '' : 'none';
-}
 
 let dragging = false;
-function scrubTo(e){
+const toTime = e => {
   const r = scrub.getBoundingClientRect();
   const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
-  seek((Math.max(0, Math.min(1, x / r.width))) * TOTAL);
-}
-scrub.addEventListener('pointerdown', e => { dragging = true; scrub.setPointerCapture(e.pointerId); scrubTo(e); });
-scrub.addEventListener('pointermove', e => { if (dragging) scrubTo(e); });
-scrub.addEventListener('pointerup', e => { dragging = false; });
+  vid.currentTime = Math.max(0, Math.min(1, x / r.width)) * (vid.duration || 77);
+  paint();
+};
+scrub.addEventListener('pointerdown', e => {
+  dragging = true; scrub.setPointerCapture(e.pointerId); toTime(e);
+});
+scrub.addEventListener('pointermove', e => { if (dragging) toTime(e); });
+scrub.addEventListener('pointerup', () => { dragging = false; });
+player.addEventListener('mousemove', () => player.classList.add('touched'));
 
 document.addEventListener('keydown', e => {
-  if (e.code === 'Space'){ e.preventDefault(); playing ? pause() : play(); }
-  if (e.code === 'ArrowRight'){ e.preventDefault(); seek(t + 2); }
-  if (e.code === 'ArrowLeft'){ e.preventDefault(); seek(t - 2); }
-  if (e.key === 'f' || e.key === 'F'){ document.getElementById('btnFull').click(); }
+  if (e.code === 'Space') { e.preventDefault(); vid.paused ? play() : vid.pause(); }
+  if (e.code === 'ArrowRight') { e.preventDefault(); vid.currentTime += 5; }
+  if (e.code === 'ArrowLeft') { e.preventDefault(); vid.currentTime -= 5; }
+  if (e.key === 'f' || e.key === 'F') document.getElementById('btnFull').click();
 });
 
-/* ticks de chapitres sur la barre */
-const ticks = document.getElementById('ticks');
-SCENES.slice(1).forEach(sc => {
-  const d = document.createElement('div');
-  d.className = 'tick';
-  d.style.left = (sc.start / TOTAL * 100) + '%';
-  ticks.appendChild(d);
-});
-
-/* démarrage */
-poster.classList.remove('hide');
-render(0, false);
-requestAnimationFrame(loop);
-
-function boot(){
-  collectAnimations();
-  render(t, playing);
-}
-if (document.readyState === 'complete') boot();
-else window.addEventListener('load', boot);
-// filet de sécurité : styles/polices pas encore appliqués au premier passage
-const retry = () => { if (animIndex.length === 0) boot(); };
-setTimeout(retry, 500);
-setTimeout(retry, 1500);
-if (document.fonts && document.fonts.ready) {
-  document.fonts.ready.then(() => { if (!playing) boot(); });
-}
+paint();
 </script>
 </body>
 </html>
