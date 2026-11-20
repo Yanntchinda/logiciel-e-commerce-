@@ -33,6 +33,28 @@ Aucun stock de rushes n'est accessible depuis l'environnement de génération (r
 les séquences « réelles » doivent venir de vos tournages, ou d'une banque d'images
 téléchargée puis déposée dans `assets/video/`.
 
+## Nettoyer un filigrane (`clean.py`)
+
+Les clips générés avec un compte gratuit portent souvent un logo incrusté. Deux traitements :
+
+```bash
+# 1. recadrage : le logo d'angle sort du cadre (rapide, invisible)
+python3 promo-travex/clean.py --in clip.mp4 --out clip_clean.mp4 --zoom 1.12
+
+# 2. reconstruction du fond sous le logo (logo centré ou trop large)
+python3 promo-travex/clean.py --in clip.mp4 --out clip_clean.mp4 --box 1608,986,292,86
+
+# sur un dossier entier
+python3 promo-travex/clean.py --in assets/video/ --out assets/video_clean/ --zoom 1.12
+```
+
+- `--zoom` est toujours préférable : aucune reconstruction, aucun artefact.
+- `--box` reconstruit par inpainting OpenCV (TELEA) uniquement dans la zone : invisible sur un fond
+  sombre, uni ou flou ; ça se voit sur une texture riche (mur de conteneurs net, texte, grille).
+- Le nettoyage se fait **avant** l'assemblage : `clean.py` sur les clips, puis `render.py`.
+- Vérifier les conditions d'utilisation de l'outil de génération : retirer un filigrane peut être
+  interdit par ses CGU, même sur un compte gratuit.
+
 ## Démo : motion design 100 % généré
 
 `export/demo-motion-10s.mp4` (10 s) est une preuve de style : **aucune photo**, tout est calculé
