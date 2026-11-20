@@ -1,0 +1,16 @@
+.DS_Store
+node_modules/
+
+# --- video-agent-skills: runtime generated on each machine (engine/setup.mjs) ---
+.claude/skills/short-editing/.runtime/
+.claude/skills/short-editing/assets/music/*.mp3
+.claude/skills/short-editing/assets/icons/*.png
+.claude/skills/short-editing/assets/icons/glyph/
+
+# --- video-agent working folder (created by /studio-setup) ---
+video-agent/.env
+video-agent/takes/
+video-agent/.tmp/
+video-agent/broll/frames/
+video-agent/broll/clips/
+video-agent/edits/*/output/
