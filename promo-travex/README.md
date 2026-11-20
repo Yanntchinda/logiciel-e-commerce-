@@ -33,6 +33,15 @@ Aucun stock de rushes n'est accessible depuis l'environnement de génération (r
 les séquences « réelles » doivent venir de vos tournages, ou d'une banque d'images
 téléchargée puis déposée dans `assets/video/`.
 
+## Démo : motion design 100 % généré
+
+`export/demo-motion-10s.mp4` (10 s) est une preuve de style : **aucune photo**, tout est calculé
+(sol en perspective qui avance, halo qui respire, trajet qui se trace, avion qui suit la courbe,
+cartouches de modes, logo). Régénérable avec `python3 promo-travex/motion_demo.py`.
+
+C'est la direction possible si vous voulez un film **entièrement animé** plutôt que des photos
+animées : plus abstrait, plus « corporate », jamais daté par une banque d'images.
+
 ## Découpage
 
 | # | Durée | Plan | Images | Voix off |
